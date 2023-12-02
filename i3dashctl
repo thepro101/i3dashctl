@@ -37,10 +37,9 @@ launch_chrome() {
     local url=$2
 echo "         Using DISPLAY $DISPLAY_NUM" &
 echo "         Opening ${URLS[$i]}" &
-$CHROME_COMMAND ${URLS[$i]} &
+$CHROME_COMMAND ${URLS[$i]} &> /dev/null &
 sleep 3
-#i3-msg fullscreen disable &
-i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &
+i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &> /dev/null &
 }
  
 # Main execution starts here
@@ -52,7 +51,6 @@ kill_chrome
 export DISPLAY=:$DISPLAY_NUM
 echo " "
 echo "  Initializing..."
-#i3-msg workspace "i3dash---> init..."
 echo " "
 # Create workspaces and launch chromium-browser for each URL
 for ((i=0; i<${#URLS[@]}; i++)); do
@@ -60,7 +58,8 @@ for ((i=0; i<${#URLS[@]}; i++)); do
     url="${URLS[$i]}"
 echo "   i3Dash $((i+1))"
 echo "       ${URLS[$i]}"
-i3-msg workspace "  $((i+1))" & sleep 5
+i3-msg workspace "  $((i+1))" &> /dev/null 
+sleep 5
 launch_chrome
 done
 echo " "
