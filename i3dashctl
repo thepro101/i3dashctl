@@ -5,31 +5,22 @@ URLS=()
 CHROME_BIN="chromium"
 CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
 TOGGLE_INTERVAL=""
-
+LOG_FILE="i3dashctl.log"
 # Function to parse command line arguments
 parse_args() {
-    while getopts "u:d:t:" opt; do
+    while getopts "u:d:t:l:" opt; do
         case ${opt} in
-            u)
-                URLS+=("$OPTARG")
-                ;;
-            d)
-                DISPLAY_NUM="$OPTARG"
-                ;;
-	    t)
-		TOGGLE_INTERVAL="$OPTARG"
-		;;
-#            b)
-#		CHROME_BIN="$OPTARG"
-#		;;
-            \?)
-                echo "Invalid option: -$OPTARG" >&2
-                exit 1
-                ;;
+            u) URLS+=("$OPTARG") ;;
+            d) DISPLAY_NUM="$OPTARG" ;;
+	    t) TOGGLE_INTERVAL="$OPTARG" ;;
+            l) LOG_FILE="$OPTARG" ;;	    
+#            b) CHROME_BIN="$OPTARG" ;;
+            \?) echo "Invalid option: -$OPTARG" >&2 exit 1 ;;
         esac
     done
 }
 
+echo "Session: $(date +'%m/%d/%Y')" >> $LOG_FILE
 # Function to kill all chromium-browser processes
 kill_chrome() {
     pkill -f $CHROME_BIN
@@ -41,15 +32,14 @@ launch_chrome() {
     local url=$2
 echo "         Using DISPLAY $DISPLAY_NUM" &
 echo "         Opening ${URLS[$i]}" &
-$CHROME_COMMAND ${URLS[$i]} &> /dev/null &
+$CHROME_COMMAND ${URLS[$i]} >> $LOG_FILE &> /dev/null &
 sleep 3
-i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &> /dev/null &
+i3-msg [instance="^$CHROME_BIN$"] fullscreen disable >> $LOG_FILE &> /dev/null &
 }
 
 toggle_workspace() {
-  i3-msg workspace next &> /dev/null
+  i3-msg workspace next >> $LOG_FILE &> /dev/null
 }
-
 
 # Main execution starts here
 parse_args "$@"
@@ -59,8 +49,12 @@ kill_chrome
 
 export DISPLAY=:$DISPLAY_NUM
 echo " "
+
 echo "  Initializing..."
+if [ "$TOGGLE_INTERVAL" > 0 ]; then
+echo " "
 echo "   Toggle Interval: $TOGGLE_INTERVAL"
+fi
 echo " "
 # Create workspaces and launch chromium-browser for each URL
 for ((i=0; i<${#URLS[@]}; i++)); do
@@ -76,7 +70,7 @@ echo " "
 done
 
 # Start toggling i3 workspaces
-if [ "$TOGGLE_INTERVAL" ]; then
+if [ "$TOGGLE_INTERVAL" > 0 ]; then
 while true; do
   toggle_workspace
   sleep $TOGGLE_INTERVAL
@@ -86,7 +80,7 @@ fi
 #   
 # You can run this script in a terminal by providing the URLs as command-line arguments using the `-u` flag. For example:
 #                                                                                                                       
-#   i3dashctl -u "https://espn.com" -u "https://reddit.com" -u "https://digg.com"
+#   i3dashctl -u "https://espn.com" -u "https://reddit.com" -u "https://digg.com" -d 0 -l i3dash.log -t 5
 #
 #
 
