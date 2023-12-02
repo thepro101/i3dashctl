@@ -56,7 +56,7 @@ for ((i=-1; i<${#URLS[@]}; i++)); do
     url="${URLS[$i]}"
 
 #echo i3-msg workspace $((i+1))
-i3-msg workspace "i3dash $((i+1))" & sleep 5 
+i3-msg workspace "    $((i+1))" & sleep 5 
 launch_chrome
 done
 
