@@ -1,0 +1,13 @@
+[Unit]
+Description=i3Dash Service
+After=network.target
+                    
+[Service]
+User=<%= @owner %>
+Group=<%= @group %>
+ExecStart=/usr/local/bin/<%= @bin %> <% @dashboard_urls.each do |dashboard_url| %> -u <%= dashboard_url %><% end %>
+ExecStop=/bin/kill -SIGINT $MAINPID
+Restart=always
+              
+[Install]
+WantedBy=multi-user.target

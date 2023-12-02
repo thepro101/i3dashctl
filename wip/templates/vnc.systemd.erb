@@ -1,0 +1,17 @@
+[Unit]
+Description=VNC Server
+After=multi-user.target network.target
+
+[Service]
+User=<%= @owner %>
+Group=<%= @group %>
+Restart=always
+# Replace this with x0vncserver from TigerVNC in Ubuntu 18.04.
+# Set password by running `sudo x11vnc -storepasswd [PASSWORD] /etc/x11vnc.passwd`
+ExecStart=/usr/bin/x11vnc -forever -display :<%= @display_num %> -norc -shared -autoport 5900 
+RestartSec=10s
+
+##-repeat -rfbport 5900
+
+[Install]
+WantedBy=multi-user.target
