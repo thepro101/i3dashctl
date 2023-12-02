@@ -4,10 +4,11 @@ DISPLAY_NUM=""
 URLS=()
 CHROME_BIN="chromium"
 CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
+TOGGLE_INTERVAL=""
 
 # Function to parse command line arguments
 parse_args() {
-    while getopts "u:d:" opt; do
+    while getopts "u:d:t:" opt; do
         case ${opt} in
             u)
                 URLS+=("$OPTARG")
@@ -15,6 +16,9 @@ parse_args() {
             d)
                 DISPLAY_NUM="$OPTARG"
                 ;;
+	    t)
+		TOGGLE_INTERVAL="$OPTARG"
+		;;
 #            b)
 #		CHROME_BIN="$OPTARG"
 #		;;
@@ -41,7 +45,12 @@ $CHROME_COMMAND ${URLS[$i]} &> /dev/null &
 sleep 3
 i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &> /dev/null &
 }
- 
+
+toggle_workspace() {
+  i3-msg workspace next &> /dev/null
+}
+
+
 # Main execution starts here
 parse_args "$@"
                
@@ -51,6 +60,7 @@ kill_chrome
 export DISPLAY=:$DISPLAY_NUM
 echo " "
 echo "  Initializing..."
+echo "   Toggle Interval: $TOGGLE_INTERVAL"
 echo " "
 # Create workspaces and launch chromium-browser for each URL
 for ((i=0; i<${#URLS[@]}; i++)); do
@@ -61,8 +71,17 @@ echo "       ${URLS[$i]}"
 i3-msg workspace "  $((i+1))" &> /dev/null 
 sleep 5
 launch_chrome
-done
 echo " "
+
+done
+
+# Start toggling i3 workspaces
+if [ "$TOGGLE_INTERVAL" ]; then
+while true; do
+  toggle_workspace
+  sleep $TOGGLE_INTERVAL
+ done
+fi
 
 #   
 # You can run this script in a terminal by providing the URLs as command-line arguments using the `-u` flag. For example:
