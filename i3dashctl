@@ -39,6 +39,9 @@ launch_chrome() {
 echo "Using DISPLAY $DISPLAY_NUM" &
 echo "Opening ${URLS[$i]}" &
 $CHROME_COMMAND ${URLS[$i]} &
+sleep 3
+#i3-msg fullscreen disable &
+i3-msg [instance="^chromium$"] fullscreen disable &
 }
  
 # Main execution starts here
