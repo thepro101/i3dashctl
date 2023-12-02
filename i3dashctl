@@ -1,13 +1,10 @@
 #!/bin/bash
 # Default values
-DISPLAY_NUM=":0"
+DISPLAY_NUM=""
 URLS=()
 CHROME_BIN="chromium"
 CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
-#CHROME_COMMAND="chromium-browser --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
 
-export DISPLAY="$DISPLAY_NUM"
-                                 
 # Function to parse command line arguments
 parse_args() {
     while getopts "u:d:" opt; do
@@ -18,6 +15,9 @@ parse_args() {
             d)
                 DISPLAY_NUM="$OPTARG"
                 ;;
+#            b)
+#		CHROME_BIN="$OPTARG"
+#		;;
             \?)
                 echo "Invalid option: -$OPTARG" >&2
                 exit 1
@@ -25,7 +25,7 @@ parse_args() {
         esac
     done
 }
- 
+
 # Function to kill all chromium-browser processes
 kill_chrome() {
     pkill -f $CHROME_BIN
@@ -49,7 +49,7 @@ parse_args "$@"
 # Kill all existing chromium-browser processes
 kill_chrome
 
-#export DISPLAY=$DISPLAY_NUM
+export DISPLAY=:$DISPLAY_NUM
 echo " "
 echo "  Initializing..."
 #i3-msg workspace "i3dash---> init..."
