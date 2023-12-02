@@ -35,9 +35,8 @@ kill_chrome() {
 launch_chrome() {
     local workspace=$1
     local url=$2
-
-echo "Using DISPLAY $DISPLAY_NUM" &
-echo "Opening ${URLS[$i]}" &
+echo "         Using DISPLAY $DISPLAY_NUM" &
+echo "         Opening ${URLS[$i]}" &
 $CHROME_COMMAND ${URLS[$i]} &
 sleep 3
 #i3-msg fullscreen disable &
@@ -51,17 +50,20 @@ parse_args "$@"
 kill_chrome
 
 #export DISPLAY=$DISPLAY_NUM
-i3-msg workspace "i3dash---> init..."
-
+echo " "
+echo "  Initializing..."
+#i3-msg workspace "i3dash---> init..."
+echo " "
 # Create workspaces and launch chromium-browser for each URL
-for ((i=-1; i<${#URLS[@]}; i++)); do
+for ((i=0; i<${#URLS[@]}; i++)); do
     workspace=$((i+1))
     url="${URLS[$i]}"
-
-#echo i3-msg workspace $((i+1))
-i3-msg workspace "    $((i+1))" & sleep 5 
+echo "   i3Dash $((i+1))"
+echo "       ${URLS[$i]}"
+i3-msg workspace "  $((i+1))" & sleep 5
 launch_chrome
 done
+echo " "
 
 #   
 # You can run this script in a terminal by providing the URLs as command-line arguments using the `-u` flag. For example:
