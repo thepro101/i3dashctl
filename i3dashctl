@@ -40,7 +40,7 @@ echo "         Opening ${URLS[$i]}" &
 $CHROME_COMMAND ${URLS[$i]} &
 sleep 3
 #i3-msg fullscreen disable &
-i3-msg [instance="^chromium$"] fullscreen disable &
+i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &
 }
  
 # Main execution starts here
