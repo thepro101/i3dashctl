@@ -47,7 +47,7 @@ i3-msg [instance="^$CHROME_BIN$"] fullscreen disable &> /dev/null &
 }
 
 toggle_workspace() {
-  i3-msg "workspace next" &> /dev/null
+  i3-msg workspace next &> /dev/null
 }
 
 
@@ -60,6 +60,7 @@ kill_chrome
 export DISPLAY=:$DISPLAY_NUM
 echo " "
 echo "  Initializing..."
+echo "   Toggle Interval: $TOGGLE_INTERVAL"
 echo " "
 # Create workspaces and launch chromium-browser for each URL
 for ((i=0; i<${#URLS[@]}; i++)); do
@@ -70,18 +71,17 @@ echo "       ${URLS[$i]}"
 i3-msg workspace "  $((i+1))" &> /dev/null 
 sleep 5
 launch_chrome
-done
 echo " "
 
+done
 
 # Start toggling i3 workspaces
-if [ -t "$TOGGLE_INTERVAL" ]; then
+if [ "$TOGGLE_INTERVAL" ]; then
 while true; do
   toggle_workspace
   sleep $TOGGLE_INTERVAL
  done
 fi
-
 
 #   
 # You can run this script in a terminal by providing the URLs as command-line arguments using the `-u` flag. For example:
