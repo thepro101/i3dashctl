@@ -2,9 +2,11 @@
 # Default values
 DISPLAY_NUM=":0"
 URLS=()
-CHROME_COMMAND="chromium --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
+CHROME_BIN="chromium"
+CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
 #CHROME_COMMAND="chromium-browser --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
 
+export DISPLAY="$DISPLAY_NUM"
                                  
 # Function to parse command line arguments
 parse_args() {
@@ -26,7 +28,7 @@ parse_args() {
  
 # Function to kill all chromium-browser processes
 kill_chrome() {
-    pkill -f chromium-browser
+    pkill -f $CHROME_BIN
 }
  
 # Function to create a new workspace and launch chromium-browser with specified URL
@@ -34,7 +36,8 @@ launch_chrome() {
     local workspace=$1
     local url=$2
 
-#echo ${URLS[$i]} &
+echo "Using DISPLAY $DISPLAY_NUM" &
+echo "Opening ${URLS[$i]}" &
 $CHROME_COMMAND ${URLS[$i]} &
 }
  
@@ -43,9 +46,9 @@ parse_args "$@"
                
 # Kill all existing chromium-browser processes
 kill_chrome
-           
-i3-msg workspace "i3dash---> init..."
 
+#export DISPLAY=$DISPLAY_NUM
+i3-msg workspace "i3dash---> init..."
 
 # Create workspaces and launch chromium-browser for each URL
 for ((i=-1; i<${#URLS[@]}; i++)); do
@@ -60,7 +63,7 @@ done
 #   
 # You can run this script in a terminal by providing the URLs as command-line arguments using the `-u` flag. For example:
 #                                                                                                                       
-#   i3dashctl -u "https://tupss.claytonkendall.com" -u "https://rushimprint.com" -u "https://claytonkendall.com"
+#   i3dashctl -u "https://espn.com" -u "https://reddit.com" -u "https://digg.com"
 #
 #
 
