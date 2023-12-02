@@ -1,0 +1,41 @@
+#!/bin/bash
+           
+# Default flag values
+log_to_file="<%= @log_to_file %>"
+display_num="<%= @display_num %>"
+interval="<%= @interval %>"
+          
+# Parse command line options
+while getopts "o:d:i:" opt; do
+  case $opt in
+    o) log_file="<%= @log_path %>"; log_to_file=true ;;
+    d) display_num="<%= @display_num %>" ;;
+    i) interval="<%= @interval %>" ;;
+    \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+  esac
+done
+    
+# Set display environment variable
+export DISPLAY=":<%= @display_num %>"
+                              
+# Function to toggle i3 workspaces
+toggle_workspace() {
+  i3-msg "workspace next"
+}
+ 
+# Start toggling i3 workspaces
+if "<%= @log_to_file %>"; then
+  if [ -z "<%= @log_path %>" ]; then
+    echo "Error: Log file location not specified using -o option" >&2; exit 1
+  fi
+  while true; do
+    toggle_workspace >> "<%= @log_path %>" 2>&1
+    sleep "<%= @interval %>"
+  done
+else
+  while true; do
+    toggle_workspace
+    sleep "<%= @interval %>"
+  done
+fi
+
