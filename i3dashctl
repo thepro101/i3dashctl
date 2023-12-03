@@ -6,14 +6,16 @@ CHROME_BIN="chromium"
 CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions-service --no-first-run --start-fullscreen --new-window"
 TOGGLE_INTERVAL=""
 LOG_FILE="i3dashctl.log"
+SPLIT_DASHBOARD=false
 # Function to parse command line arguments
 parse_args() {
-    while getopts "u:d:t:l:" opt; do
+    while getopts "u:d:t:l:s:" opt; do
         case ${opt} in
             u) URLS+=("$OPTARG") ;;
             d) DISPLAY_NUM="$OPTARG" ;;
 	    t) TOGGLE_INTERVAL="$OPTARG" ;;
             l) LOG_FILE="$OPTARG" ;;	    
+            s) SPLIT_DASHBOARD="$OPTARG" ;;
 #            b) CHROME_BIN="$OPTARG" ;;
             \?) echo "Invalid option: -$OPTARG" >&2 exit 1 ;;
         esac
@@ -57,6 +59,24 @@ echo "   Toggle Interval: $TOGGLE_INTERVAL"
 fi
 echo " "
 # Create workspaces and launch chromium-browser for each URL
+
+if [ "$SPLIT_DASHBOARD" = true ] ; then
+echo "   Split Dashboard: Enabled" 
+echo " "
+for ((i=0; i<${#URLS[@]}; i++)); do
+    workspace=$((i+1))
+    url="${URLS[$i]}"
+echo "   i3Dash 1"
+echo "       ${URLS[$i]}"
+i3-msg workspace "  1" &> /dev/null
+sleep 5
+launch_chrome
+sleep 2
+echo " "
+done
+
+
+else
 for ((i=0; i<${#URLS[@]}; i++)); do
     workspace=$((i+1))
     url="${URLS[$i]}"
@@ -66,8 +86,11 @@ i3-msg workspace "  $((i+1))" &> /dev/null
 sleep 5
 launch_chrome
 echo " "
-
 done
+
+fi
+
+########################
 
 # Start toggling i3 workspaces
 if [ "$TOGGLE_INTERVAL" > 0 ]; then
