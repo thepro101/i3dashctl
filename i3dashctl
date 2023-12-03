@@ -7,6 +7,7 @@ CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions
 TOGGLE_INTERVAL=""
 LOG_FILE="i3dashctl.log"
 SPLIT_DASHBOARD=false
+#USER=		## Needed to run over ssh or as root
 # Function to parse command line arguments
 parse_args() {
     while getopts "u:d:t:l:s:" opt; do
