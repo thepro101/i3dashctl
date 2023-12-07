@@ -7,17 +7,18 @@ CHROME_COMMAND="$CHROME_BIN --incognito --disable-infobars --disable-suggestions
 TOGGLE_INTERVAL=""
 LOG_FILE="i3dashctl.log"
 SPLIT_DASHBOARD=false
+HELP="-h"
 #USER=		## Needed to run over ssh or as root
 # Function to parse command line arguments
 parse_args() {
-    while getopts "u:d:t:l:s:" opt; do
+    while getopts "u:d:t:l:s:h:" opt; do
         case ${opt} in
             u) URLS+=("$OPTARG") ;;
             d) DISPLAY_NUM="$OPTARG" ;;
 	    t) TOGGLE_INTERVAL="$OPTARG" ;;
             l) LOG_FILE="$OPTARG" ;;	    
             s) SPLIT_DASHBOARD="$OPTARG" ;;
-#            h) HELP="$2" ;;
+            h) HELP="-h" ;;
 #            b) CHROME_BIN="$OPTARG" ;;
             \?) echo "Invalid option: -$OPTARG" >&2 exit 1 ;;
         esac
@@ -37,6 +38,7 @@ function usage {
 
    Usage: i3dashctl -u reddit.com -u github.com -d 0 -t 5 
 
+	-u	url
 	-l 	Log file (Default: i3dashctl.log)
 	-d 	Display Number (Default: 0)
 	-t	Toggle Interval (Default: disabled)
@@ -67,10 +69,6 @@ parse_args "$@"
                
 # Kill all existing chromium-browser processes
 kill_chrome
-
-#if [ "$HELP" = "-h" ] ; then
-#usage;
-#else
 
 export DISPLAY=:$DISPLAY_NUM
 
@@ -122,7 +120,12 @@ while true; do
   toggle_workspace
   sleep $TOGGLE_INTERVAL
  done
+
 fi
+
+#if [ "$HELP" = "-h" ] ; then
+#usage;
+
 
 #fi
 #   
